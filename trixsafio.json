@@ -1,0 +1,13 @@
+{
+  "id": "trixsafio",
+  "name": "Trixsafio",
+  "version": "1.1.0",
+  "minecraft": "1.21.1",
+  "fabricLoader": "0.18.4",
+  "mrpackUrls": [
+    "https://github.com/trixito/Gustambo-Launcher/releases/download/pack-1.1.0/Trixsafio_ReZero.mrpack"
+  ],
+  "sha1": "1837db17f058357b81a964a24211c52ccf24e8e9",
+  "size": 61399321,
+  "changelog": "Primera versión con actualización automática."
+}
