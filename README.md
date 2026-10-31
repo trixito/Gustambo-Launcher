@@ -1,3 +1,9 @@
+> **Gustambo Client** is an unofficial, modified version of [Zalith Launcher 2](https://github.com/ZalithLauncher/ZalithLauncher2), made for Trixsafio events. It is not affiliated with or endorsed by the original authors. Licensed under GPL-3.0.
+>
+> **Gustambo Client** es una versión no oficial y modificada de [Zalith Launcher 2](https://github.com/ZalithLauncher/ZalithLauncher2), hecha para los eventos de Trixsafio. No está afiliada ni respaldada por los autores originales. Licencia GPL-3.0.
+
+---
+
 # Zalith Launcher 2
 ![Downloads](https://img.shields.io/github/downloads/ZalithLauncher/ZalithLauncher2/total)
 [![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors)](https://afdian.com/a/MovTery)
