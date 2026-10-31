@@ -82,6 +82,7 @@ import com.movtery.zalithlauncher.ui.components.SimpleListItem
 import com.movtery.zalithlauncher.ui.components.animated
 import com.movtery.zalithlauncher.ui.components.rememberAnimatedContext
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountItem
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountSkinOperation
@@ -190,7 +191,11 @@ fun AccountManageScreen(
         when (key.loginMenu) {
             FirstLoginMenu.NONE -> {}
             FirstLoginMenu.MICROSOFT -> {
-                actions.onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.Tip))
+                if (EventsConfig.EVENTS_MODE) {
+                    actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.Edit))
+                } else {
+                    actions.onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.Tip))
+                }
             }
             FirstLoginMenu.NORMAL -> {
                 actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.Login))
@@ -335,7 +340,13 @@ private fun LoginMenuOperation(
     when (operation) {
         LoginMenuOperation.None -> {}
         LoginMenuOperation.Login -> {
-            LoginMenuDialog(
+            if (EventsConfig.EVENTS_MODE) {
+                //Gustambo: solo login offline, sin menú de selección
+                LaunchedEffect(Unit) {
+                    actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.None))
+                    actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.Edit))
+                }
+            } else LoginMenuDialog(
                 onDismissRequest = {
                     actions.onIntent(
                         AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.None)
