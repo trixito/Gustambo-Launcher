@@ -224,7 +224,7 @@
     <!-- Subtitle shown below the animated welcome title -->
     <string name="welcome_screen_subtitle">Come and experience something new.</string>
     <!-- First welcome introduction paragraph; %1$s is the launcher name -->
-    <string name="welcome_screen_intro_primary">Welcome to %1$s, a third-party Minecraft: Java Edition launcher designed for Android devices.</string>
+    <string name="welcome_screen_intro_primary">Welcome to %1$s, an unofficial modified version of Zalith Launcher 2, made for Trixsafio events. It is a third-party Minecraft: Java Edition launcher designed for Android devices.</string>
     <!-- Second introduction paragraph describing the PojavLauncher core -->
     <string name="welcome_screen_intro_core">Powered by PojavLauncher, it provides a modern game launch and management experience.</string>
     <!-- Heading of the agreement links on the welcome screen -->
