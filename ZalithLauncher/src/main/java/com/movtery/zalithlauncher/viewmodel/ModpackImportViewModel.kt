@@ -154,7 +154,8 @@ class ModpackImportViewModel : ViewModel() {
         context: Context,
         uri: Uri,
         onStart: () -> Unit = {},
-        onStop: () -> Unit = {}
+        onStop: () -> Unit = {},
+        onImported: (versionName: String) -> Unit = {}
     ) {
         if (importOperation != ModpackImportOperation.None) {
             //当前有别的导入任务，拒绝这次导入
@@ -173,6 +174,7 @@ class ModpackImportViewModel : ViewModel() {
                     importer = null
                     VersionsManager.refresh("[Modpack] ModpackImporter.onFinished", version)
                     importOperation = ModpackImportOperation.Finished
+                    onImported(version)
                     onStop()
                 },
                 onCancelled = {
