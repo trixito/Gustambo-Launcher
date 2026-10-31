@@ -531,6 +531,7 @@ private fun NavigationUI(
                 entry<NormalNavKey.LauncherMain> {
                     LauncherScreen(
                         backStackViewModel = screenBackStackModel,
+                        modpackImportViewModel = modpackImportViewModel,
                         navigateToVersions = navigateToVersions,
                         onLaunchGame = { version ->
                             eventViewModel.sendEvent(
