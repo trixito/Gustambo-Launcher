@@ -96,6 +96,7 @@ import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.AccountManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.DownloadScreen
 import com.movtery.zalithlauncher.ui.screens.content.FileSelectorScreen
+import com.movtery.zalithlauncher.ui.screens.content.FirstLoginMenu
 import com.movtery.zalithlauncher.ui.screens.content.LauncherScreen
 import com.movtery.zalithlauncher.ui.screens.content.LicenseScreen
 import com.movtery.zalithlauncher.ui.screens.content.LogViewScreen
@@ -188,6 +189,12 @@ fun MainScreen(
                     screenBackStackModel.mainScreen.backStack.removeFirstOrNull()
                 },
                 toMainScreen = toMainScreen,
+                toAccountScreen = {
+                    screenBackStackModel.mainScreen.removeAndNavigateTo(
+                        removes = screenBackStackModel.clearBeforeNavKeys,
+                        screenKey = NormalNavKey.AccountManager(FirstLoginMenu.NONE)
+                    )
+                },
                 toSettingsScreen = {
                     screenBackStackModel.mainScreen.removeAndNavigateTo(
                         removes = screenBackStackModel.clearBeforeNavKeys,
@@ -257,6 +264,7 @@ private fun <E: TitledNavKey> TopBar(
     contentColor: Color,
     onScreenBack: () -> Unit,
     toMainScreen: () -> Unit,
+    toAccountScreen: () -> Unit,
     toSettingsScreen: () -> Unit,
     toDownloadScreen: () -> Unit,
     toMultiplayerScreen: () -> Unit,
@@ -268,6 +276,7 @@ private fun <E: TitledNavKey> TopBar(
     val inMultiplayerScreen = mainScreenKey is NormalNavKey.Multiplayer
     val inDownloadScreen = mainScreenKey is NestedNavKey.Download
     val inSettingsScreen = mainScreenKey is NestedNavKey.Settings
+    val inAccountScreen = mainScreenKey is NormalNavKey.AccountManager
 
     CompositionLocalProvider(
         LocalContentColor provides contentColor
@@ -409,32 +418,49 @@ private fun <E: TitledNavKey> TopBar(
                     }
                 }
 
-                IconButton(
-                    onClick = openFileManager
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_folder_filled),
-                        contentDescription = null
+                if (EventsConfig.showFileManager) {
+                    IconButton(
+                        onClick = openFileManager
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_folder_filled),
+                            contentDescription = null
+                        )
+                    }
+                }
+
+                if (EventsConfig.showMultiplayer) {
+                    TopBarRailItem(
+                        selected = inMultiplayerScreen,
+                        painter = painterResource(R.drawable.ic_group_filled),
+                        text = stringResource(R.string.terracotta),
+                        onClick = {
+                            if (!inMultiplayerScreen) toMultiplayerScreen()
+                        },
                     )
                 }
 
-                TopBarRailItem(
-                    selected = inMultiplayerScreen,
-                    painter = painterResource(R.drawable.ic_group_filled),
-                    text = stringResource(R.string.terracotta),
-                    onClick = {
-                        if (!inMultiplayerScreen) toMultiplayerScreen()
-                    },
-                )
+                if (EventsConfig.showDownload) {
+                    TopBarRailItem(
+                        selected = inDownloadScreen,
+                        painter = painterResource(R.drawable.ic_download_2_filled),
+                        text = stringResource(R.string.generic_download),
+                        onClick = {
+                            if (!inDownloadScreen) toDownloadScreen()
+                        },
+                    )
+                }
 
-                TopBarRailItem(
-                    selected = inDownloadScreen,
-                    painter = painterResource(R.drawable.ic_download_2_filled),
-                    text = stringResource(R.string.generic_download),
-                    onClick = {
-                        if (!inDownloadScreen) toDownloadScreen()
-                    },
-                )
+                if (EventsConfig.showAccounts) {
+                    TopBarRailItem(
+                        selected = inAccountScreen,
+                        painter = painterResource(R.drawable.ic_group_filled), // TODO: cambiar por un ícono de persona
+                        text = "Cuentas",
+                        onClick = {
+                            if (!inAccountScreen) toAccountScreen()
+                        },
+                    )
+                }
 
                 TopBarRailItem(
                     selected = inSettingsScreen,
@@ -838,4 +864,18 @@ private fun TaskItem(
             }
         }
     }
+}
+
+/**
+ * Interruptor del launcher de eventos.
+ * EVENTS_MODE = true  -> solo lo necesario para eventos.
+ * EVENTS_MODE = false -> Zalith Launcher normal.
+ */
+object EventsConfig {
+    const val EVENTS_MODE = true
+
+    val showFileManager = !EVENTS_MODE
+    val showMultiplayer = !EVENTS_MODE
+    val showDownload = !EVENTS_MODE
+    val showAccounts = EVENTS_MODE
 }
