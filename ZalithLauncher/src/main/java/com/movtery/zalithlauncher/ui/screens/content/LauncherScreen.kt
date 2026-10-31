@@ -34,6 +34,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -98,6 +100,7 @@ import com.movtery.zalithlauncher.ui.components.rememberAnimatedContext
 import com.movtery.zalithlauncher.ui.guide.GuideKeys
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import com.movtery.zalithlauncher.ui.screens.content.elements.CommonVersionInfoLayout
 import com.movtery.zalithlauncher.ui.screens.content.elements.PlayerFace
 import com.movtery.zalithlauncher.ui.screens.content.elements.VersionIconImage
@@ -280,7 +283,41 @@ private fun ContentMenu(
         LocalHomeCardVersionSettings provides onOpenVersionSettings,
         LocalServerCardQuickPlay provides onQuickPlayServer
     ) {
-        Column(modifier = modifier.fillMaxSize()) {
+        if (EventsConfig.EVENTS_MODE) {
+            //Gustambo: inicio limpio para eventos (sin cuadrícula de noticias/servidores)
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(12.dp)
+                    .animated(ctx),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                BackgroundCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.extraLarge
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Gustambo Launcher",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Text(
+                            text = "Eventos Trixsafio",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+
+                TrixsafioCard(
+                    modpackImportViewModel = modpackImportViewModel,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        } else Column(modifier = modifier.fillMaxSize()) {
             //Gustambo: tarjeta de Trixsafio (instalar / actualizar el pack)
             TrixsafioCard(
                 modpackImportViewModel = modpackImportViewModel,
