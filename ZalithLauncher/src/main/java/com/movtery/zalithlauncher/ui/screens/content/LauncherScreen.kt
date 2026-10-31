@@ -109,6 +109,8 @@ import com.movtery.zalithlauncher.ui.screens.content.home.rememberActionMenuDrag
 import com.movtery.zalithlauncher.ui.screens.content.home.server.LocalServerCardQuickPlay
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardLauncher
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardVersionSettings
+import com.movtery.zalithlauncher.ui.screens.content.elements.TrixsafioCard
+import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -125,6 +127,7 @@ private val ActionMenuOuterPadding = 12.dp
 @Composable
 fun LauncherScreen(
     backStackViewModel: ScreenBackStackViewModel,
+    modpackImportViewModel: ModpackImportViewModel,
     navigateToVersions: (Version) -> Unit,
     onLaunchGame: (Version?) -> Unit,
     onQuickPlayServer: (Version?, String) -> Unit,
@@ -212,6 +215,7 @@ fun LauncherScreen(
                         .weight(ContentWeight)
                         .offset { IntOffset(x = dragState.previewShift.value.roundToInt(), y = 0) },
                     isVisible = isVisible,
+                    modpackImportViewModel = modpackImportViewModel,
                     onLaunchGame = { version ->
                         onLaunchGame(version)
                     },
@@ -262,6 +266,7 @@ fun LauncherScreen(
 @Composable
 private fun ContentMenu(
     isVisible: Boolean,
+    modpackImportViewModel: ModpackImportViewModel,
     onLaunchGame: (Version) -> Unit,
     onQuickPlayServer: (Version?, String) -> Unit,
     onOpenVersionSettings: (Version) -> Unit,
@@ -275,13 +280,21 @@ private fun ContentMenu(
         LocalHomeCardVersionSettings provides onOpenVersionSettings,
         LocalServerCardQuickPlay provides onQuickPlayServer
     ) {
-        HomeGrid(
-            state = gridState,
-            isVisible = isVisible,
-            modifier = modifier
-                .fillMaxSize()
-                .animated(ctx)
-        )
+        Column(modifier = modifier.fillMaxSize()) {
+            //Gustambo: tarjeta de Trixsafio (instalar / actualizar el pack)
+            TrixsafioCard(
+                modpackImportViewModel = modpackImportViewModel,
+                modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 12.dp)
+            )
+            HomeGrid(
+                state = gridState,
+                isVisible = isVisible,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .animated(ctx)
+            )
+        }
     }
 }
 
