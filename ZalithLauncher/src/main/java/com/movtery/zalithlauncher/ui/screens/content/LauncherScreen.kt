@@ -114,6 +114,10 @@ import com.movtery.zalithlauncher.ui.screens.content.home.server.LocalServerCard
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardLauncher
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardVersionSettings
 import com.movtery.zalithlauncher.ui.screens.content.elements.TrixsafioCard
+import com.movtery.zalithlauncher.ui.screens.content.elements.EventsHome
+import com.movtery.zalithlauncher.ui.screens.content.elements.launcherCardColors
+import com.movtery.zalithlauncher.game.download.trixsafio.TrixsafioController
+import com.movtery.zalithlauncher.game.download.trixsafio.TrixsafioStatus
 import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import kotlinx.coroutines.Dispatchers
@@ -147,6 +151,21 @@ fun LauncherScreen(
         screenKey = NormalNavKey.LauncherMain,
         currentKey = backStackViewModel.mainScreen.currentKey
     ) { isVisible ->
+        if (EventsConfig.EVENTS_MODE) {
+            //Gustambo Studio: inicio con barra lateral de eventos
+            EventsHome(
+                isVisible = isVisible,
+                modpackImportViewModel = modpackImportViewModel,
+                onPlay = { onLaunchGame(null) },
+                onOpenAccount = {
+                    backStackViewModel.mainScreen.navigateTo(
+                        screenKey = NormalNavKey.AccountManager(FirstLoginMenu.NONE)
+                    )
+                }
+            )
+            return@BaseScreen
+        }
+
         val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
         val dockedSide = AllSettings.launcherActionMenuSide.state
         val dragState = rememberActionMenuDragState(
@@ -316,7 +335,7 @@ private fun ContentMenu(
                             color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
-                            text = "Eventos Trixsafio",
+                            text = "Eventos Gustambo's Studio",
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -476,15 +495,29 @@ private fun VersionsContent(
                     )
                 }
             }
+            //Jugar solo se activa con Trixsafio instalado y sin tareas en curso
+            val status = TrixsafioController.status
+            val busy = TrixsafioController.work != null
+            val installed = status is TrixsafioStatus.UpToDate ||
+                    status is TrixsafioStatus.UpdateAvailable ||
+                    (status is TrixsafioStatus.Failed && version?.isValid() == true)
+            val canPlay = installed && !busy
+            val playLabel = when {
+                busy -> "Instalando…"
+                status is TrixsafioStatus.Checking -> "Comprobando…"
+                !installed -> "Instala el evento primero"
+                else -> stringResource(R.string.main_launch_game)
+            }
             ScalingActionButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(PaddingValues(horizontal = 12.dp))
                     .padding(bottom = 8.dp),
+                enabled = canPlay,
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp),
                 onClick = { onLaunchGame(null) },
                 content = {
-                    MarqueeText(text = stringResource(R.string.main_launch_game))
+                    MarqueeText(text = playLabel)
                 }
             )
         }
@@ -613,7 +646,8 @@ private fun ActionMenuCardContent(
             .actionMenuDragAnchor()
             .guideNode(GuideKeys.Main.Step.CardDrag)
             .then(modifier),
-        shape = MaterialTheme.shapes.extraLarge
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = launcherCardColors()
     ) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
@@ -715,6 +749,7 @@ private fun ActionMenuTallerContent(
                 )
                 .fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge,
+            colors = launcherCardColors(),
             onClick = toAccountManageScreen
         ) {
             AccountAvatarRow(
@@ -726,6 +761,7 @@ private fun ActionMenuTallerContent(
         BackgroundCard(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge,
+            colors = launcherCardColors()
         ) {
             VersionsContent(
                 modifier = Modifier.fillMaxWidth(),
