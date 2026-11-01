@@ -55,6 +55,7 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.CategoryIcon
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import com.movtery.zalithlauncher.ui.screens.content.elements.CategoryItem
 import com.movtery.zalithlauncher.ui.screens.content.settings.AboutInfoScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.ControlManageScreen
@@ -140,7 +141,8 @@ private fun TabMenu(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(12.dp))
-        settingItems.forEach { item ->
+        //Gustambo: en modo eventos se oculta la pestaña "Launcher" (temas y apariencia)
+        settingItems.filter { !(EventsConfig.EVENTS_MODE && it.key == NormalNavKey.Settings.Launcher) }.forEach { item ->
             if (item.division) {
                 HorizontalDivider(
                     modifier = Modifier
@@ -235,9 +237,6 @@ private fun NavigationUI(
                         mainScreenKey = mainScreenKey,
                         checkUpdate = {
                             eventViewModel.sendEvent(EventViewModel.Event.CheckUpdate)
-                        },
-                        onViewSponsors = {
-                            eventViewModel.sendEvent(EventViewModel.Event.ShowSponsors)
                         },
                         openLicense = openLicenseScreen,
                         openLink = { url ->

@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -293,21 +294,31 @@ private fun ContentMenu(
                     .animated(ctx),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                BackgroundCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.extraLarge
+                //Cabecera sin tarjeta: logo + título directamente sobre el fondo
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
+                    Image(
+                        painter = painterResource(R.drawable.img_launcher),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(MaterialTheme.shapes.large)
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
                             text = "Gustambo Launcher",
-                            style = MaterialTheme.typography.headlineSmall
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
                             text = "Eventos Trixsafio",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -438,6 +449,47 @@ private fun VersionsContent(
 ) {
     val version by VersionsManager.currentVersion.collectAsStateWithLifecycle()
     val isRefreshing by VersionsManager.isRefreshing.collectAsStateWithLifecycle()
+
+    if (EventsConfig.EVENTS_MODE) {
+        //Gustambo: solo Trixsafio. Sin selector de versión, sin gestión/creación/importación
+        //de instancias, sin ajustes de instancia y sin el texto "No hay versiones instaladas".
+        Column(modifier = modifier) {
+            version?.takeIf { !isRefreshing && it.isValid() }?.let { v ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    VersionIconImage(
+                        version = v,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        modifier = Modifier
+                            .weight(1f)
+                            .basicMarquee(iterations = Int.MAX_VALUE),
+                        text = v.getVersionName(),
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1
+                    )
+                }
+            }
+            ScalingActionButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(PaddingValues(horizontal = 12.dp))
+                    .padding(bottom = 8.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp),
+                onClick = { onLaunchGame(null) },
+                content = {
+                    MarqueeText(text = stringResource(R.string.main_launch_game))
+                }
+            )
+        }
+        return
+    }
 
     var showList by remember { mutableStateOf(false) }
     var versionManagerRow by remember { mutableStateOf<LayoutCoordinates?>(null) }
