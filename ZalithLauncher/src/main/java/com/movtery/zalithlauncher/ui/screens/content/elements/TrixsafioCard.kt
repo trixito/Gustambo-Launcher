@@ -42,7 +42,10 @@ fun TrixsafioCard(
     val status = TrixsafioController.status
     val work = TrixsafioController.work
 
-    Card(modifier = modifier.fillMaxWidth()) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = launcherCardColors()
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)

@@ -23,6 +23,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Parcelable
 import androidx.compose.foundation.Image
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardColors
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -87,6 +92,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import com.movtery.zalithlauncher.ui.components.ButtonPosition
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.PositionButton
@@ -206,8 +212,14 @@ fun LaunchGameOperation(
         is LaunchGameOperation.None -> {}
         is LaunchGameOperation.NoVersion -> {
             LaunchedEffect(Unit) {
-                eventViewModel.sendToast(androidText(R.string.game_launch_no_version))
-                toVersionManageScreen()
+                if (EventsConfig.EVENTS_MODE) {
+                    //Gustambo: launcher solo de eventos, no se crean versiones; se queda en inicio para instalar Trixsafio
+                    eventViewModel.sendToast(androidText("Primero instala el evento para poder jugar"))
+                    backToMain()
+                } else {
+                    eventViewModel.sendToast(androidText(R.string.game_launch_no_version))
+                    toVersionManageScreen()
+                }
                 launchGameViewModel.updateOperation(LaunchGameOperation.None)
             }
         }
@@ -688,3 +700,42 @@ private fun BackgroundImage(
         contentScale = ContentScale.Crop
     )
 }
+/**
+ * Gustambo: fondo fijo (foto) del launcher de eventos.
+ * La imagen va en res/drawable-nodpi/bg_events.(jpg|png|webp).
+ */
+@Composable
+fun EventsBackground(modifier: Modifier = Modifier) {
+    Box(modifier = modifier) {
+        Image(
+            painter = painterResource(R.drawable.bg_events),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        //capa oscura para que los textos se lean bien (sube/baja el alpha a gusto)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.45f))
+        )
+    }
+}
+
+/**
+ * Gustambo: colores de las tarjetas del inicio.
+ * En modo eventos son semitransparentes para que se vea la foto de fondo (sube/baja el alpha a gusto).
+ */
+@Composable
+fun launcherCardColors(): CardColors =
+    if (EventsConfig.EVENTS_MODE) {
+        CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright.copy(alpha = 0.72f),
+            contentColor = onCardColor()
+        )
+    } else {
+        CardDefaults.cardColors(
+            containerColor = cardColor(true),
+            contentColor = onCardColor()
+        )
+    }
