@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme
@@ -599,9 +600,38 @@ private fun customDark(
     )
 }
 
+/**
+ * Gustambo: tema A, oscuro y limpio. Un solo color de acento (GUSTAMBO_ACCENT).
+ */
+private val GUSTAMBO_ACCENT = Color(0xFF7C9CFF)
+
+private val gustamboDark = darkColorScheme(
+    primary = GUSTAMBO_ACCENT,
+    onPrimary = Color(0xFF0B0E14),
+    primaryContainer = Color(0xFF26324F),
+    onPrimaryContainer = Color(0xFFDCE4FF),
+    secondary = Color(0xFFB4BCD0),
+    onSecondary = Color(0xFF0B0E14),
+    secondaryContainer = Color(0xFF232733),
+    onSecondaryContainer = Color(0xFFE1E4EE),
+    background = Color(0xFF0F1115),
+    onBackground = Color(0xFFE6E8EE),
+    surface = Color(0xFF0F1115),
+    onSurface = Color(0xFFE6E8EE),
+    surfaceVariant = Color(0xFF1F232C),
+    onSurfaceVariant = Color(0xFFA9AFBD),
+    surfaceContainerLowest = Color(0xFF0B0D11),
+    surfaceContainerLow = Color(0xFF13161B),
+    surfaceContainer = Color(0xFF171A21),
+    surfaceContainerHigh = Color(0xFF1D2129),
+    surfaceContainerHighest = Color(0xFF232833),
+    outline = Color(0xFF2B303B),
+    outlineVariant = Color(0xFF222630),
+)
+
 @Composable
 fun ZalithLauncherTheme(
-    darkTheme: Boolean = isLauncherInDarkTheme(),
+    darkTheme: Boolean = if (EventsConfig.EVENTS_MODE) true else isLauncherInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     backgroundViewModel: BackgroundViewModel? = null,
@@ -617,6 +647,8 @@ fun ZalithLauncherTheme(
 
     val targetColorScheme = remember(darkTheme, dynamicColor, colorTheme, customColor, customPaletteStyle) {
         when {
+            EventsConfig.EVENTS_MODE -> gustamboDark
+
             dynamicColor && colorTheme == ColorThemeType.DYNAMIC && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                 if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             }
