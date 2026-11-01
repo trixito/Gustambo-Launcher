@@ -85,7 +85,6 @@ fun AboutInfoScreen(
     settingsScreenKey: TitledNavKey?,
     mainScreenKey: TitledNavKey?,
     checkUpdate: () -> Unit,
-    onViewSponsors: () -> Unit,
     openLicense: (raw: Int) -> Unit,
     openLink: (url: String) -> Unit
 ) {
@@ -147,19 +146,6 @@ fun AboutInfoScreen(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         val launcherName = remember { launcherName() }
-
-                        ButtonIconItem(
-                            icon = painterResource(R.drawable.img_sponsor),
-                            title = stringResource(R.string.about_sponsors_title),
-                            text = stringResource(R.string.about_sponsors_summary, launcherName),
-                            button = {
-                                Button(
-                                    onClick = onViewSponsors
-                                ) {
-                                    Text(text = stringResource(R.string.generic_view))
-                                }
-                            }
-                        )
 
                         ButtonIconItem(
                             icon = painterResource(R.drawable.img_avatar_bangbang93),

@@ -101,6 +101,7 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.DisabledAlpha
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.EnumSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.IntSliderSettingsCard
@@ -162,7 +163,8 @@ fun LauncherSettingsScreen(
                         updateOperation = { customColorOperation = it }
                     )
 
-                    EnumSettingsCard(
+                    //Gustambo: en modo eventos el tema es fijo, sin opciones de edición
+                    if (!EventsConfig.EVENTS_MODE) EnumSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Top,
                         unit = AllSettings.launcherColorTheme,
@@ -191,7 +193,7 @@ fun LauncherSettingsScreen(
                         }
                     )
 
-                    ListSettingsCard(
+                    if (!EventsConfig.EVENTS_MODE) ListSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Middle,
                         unit = AllSettings.launcherDarkMode,
@@ -202,7 +204,7 @@ fun LauncherSettingsScreen(
 
                     ListSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
+                        position = if (EventsConfig.EVENTS_MODE) CardPosition.Top else CardPosition.Middle,
                         unit = AllSettings.launcherLanguage,
                         items = AppLanguage.entries,
                         title = systemLocaleStringResource(R.string.settings_launcher_language),
@@ -215,7 +217,7 @@ fun LauncherSettingsScreen(
                         }
                     )
 
-                    SwitchSettingsCard(
+                    if (!EventsConfig.EVENTS_MODE) SwitchSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Middle,
                         unit = AllSettings.launcherFestivalEffects,
@@ -234,7 +236,7 @@ fun LauncherSettingsScreen(
             }
 
             //启动器背景设置板块
-            LocalBackgroundViewModel.current?.let { backgroundViewModel ->
+            LocalBackgroundViewModel.current?.takeIf { !EventsConfig.EVENTS_MODE }?.let { backgroundViewModel ->
                 AnimatedItem { ctx ->
                     SettingsCardColumn(
                         modifier = Modifier
