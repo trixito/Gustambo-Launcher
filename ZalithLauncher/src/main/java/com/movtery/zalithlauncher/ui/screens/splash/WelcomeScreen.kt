@@ -82,6 +82,7 @@ import com.movtery.zalithlauncher.ui.components.fadeEdge
 import com.movtery.zalithlauncher.ui.components.swapAnimateAlphaProgressAsState
 import com.movtery.zalithlauncher.ui.components.swapAnimateProgressAsState
 import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import com.movtery.zalithlauncher.ui.screens.main.control_editor.InfoLayoutTextItem
 import com.movtery.zalithlauncher.utils.animation.SwapTimeline
 import com.movtery.zalithlauncher.viewmodel.SplashBackStackViewModel
@@ -91,6 +92,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
+
+//Gustambo: textos de la bienvenida del launcher de eventos (edítalos aquí)
+private const val EVENTS_TITLE_FIRST = "BIEN"
+private const val EVENTS_TITLE_SECOND = "VENIDO!"
+private const val EVENTS_TAG = "♥ GUSTAMBO'S STUDIO ♥"
+private const val EVENTS_SUBTITLE = "Tu launcher para los eventos de Gustambo's Studio."
+private const val EVENTS_INTRO = "Gustambo Launcher es el launcher de los eventos de Gustambo's Studio: instala el evento y entra a jugar."
+private const val EVENTS_CREDITS = "Basado en Zalith Launcher 2 (GPL-3.0)."
+private const val EVENTS_START = "Comenzar"
+/** Reglas de los eventos. Si la lista está vacía no se pide aceptar nada; si tiene líneas, se muestran y hay que marcar la casilla. */
+private val EVENTS_RULES: List<String> = emptyList()
+private const val EVENTS_RULES_TITLE = "Reglas de los eventos"
+private const val EVENTS_RULES_CONFIRM = "He leído y acepto las reglas."
 
 @Composable
 fun WelcomeScreen(
@@ -249,7 +263,7 @@ private fun WelcomeTerminal(
         welcomeText = ""
         welcomeFinished = false
         delay(700.milliseconds)
-        "WEL".forEach { character ->
+        (if (EventsConfig.EVENTS_MODE) EVENTS_TITLE_FIRST else "WEL").forEach { character ->
             welcomeText += character
             delay(85.milliseconds)
         }
@@ -257,12 +271,14 @@ private fun WelcomeTerminal(
         // 中途小小休息
         delay(420.milliseconds)
 
-        "COME!".forEach { character ->
+        (if (EventsConfig.EVENTS_MODE) EVENTS_TITLE_SECOND else "COME!").forEach { character ->
             welcomeText += character
             delay(85.milliseconds)
         }
         welcomeFinished = true
     }
+
+    val titleSize = if (EventsConfig.EVENTS_MODE && (EVENTS_TITLE_FIRST + EVENTS_TITLE_SECOND).length > 8) 40.sp else 56.sp
 
     Surface(
         modifier = modifier,
@@ -305,7 +321,7 @@ private fun WelcomeTerminal(
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                        text = "♥ MADE WITH HEART ♥",
+                        text = if (EventsConfig.EVENTS_MODE) EVENTS_TAG else "♥ MADE WITH HEART ♥",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.4.sp
@@ -322,7 +338,7 @@ private fun WelcomeTerminal(
                         style = MaterialTheme.typography.displayLarge,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
-                        fontSize = 56.sp,
+                        fontSize = titleSize,
                         letterSpacing = (-2).sp,
                         maxLines = 1
                     )
@@ -334,7 +350,7 @@ private fun WelcomeTerminal(
                         color = MaterialTheme.colorScheme.primary,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
-                        fontSize = 56.sp,
+                        fontSize = titleSize,
                         maxLines = 1
                     )
                 }
@@ -349,7 +365,7 @@ private fun WelcomeTerminal(
                         offsetX = 0.dp,
                         offsetY = 48.dp
                     ),
-                    text = stringResource(R.string.welcome_screen_subtitle),
+                    text = if (EventsConfig.EVENTS_MODE) EVENTS_SUBTITLE else stringResource(R.string.welcome_screen_subtitle),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f),
                     fontWeight = FontWeight.SemiBold
@@ -520,6 +536,13 @@ private fun WelcomeIntroduction(
     }
 
     LaunchedEffect(agreement) {
+        if (EventsConfig.EVENTS_MODE) {
+            //Gustambo: sin los acuerdos de ZalithLauncher2; solo se piden las reglas propias si existen
+            documents = emptyList()
+            onAgreementRequiredChange(EVENTS_RULES.isNotEmpty())
+            if (EVENTS_RULES.isEmpty()) onAgreementCheckedChange(false)
+            return@LaunchedEffect
+        }
         val region = if (Locale.getDefault().country.equals("CN", ignoreCase = true)) "zh" else "global"
         val selectedAgreement = agreement?.files?.firstOrNull {
             it.effectiveRegion.equals(region, ignoreCase = true)
@@ -550,14 +573,53 @@ private fun WelcomeIntroduction(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(R.string.welcome_screen_intro_primary, BuildKeys.LAUNCHER_NAME),
-                    lineHeight = 26.sp
-                )
-                Text(
-                    text = stringResource(R.string.welcome_screen_intro_core),
-                    lineHeight = 26.sp
-                )
+                if (EventsConfig.EVENTS_MODE) {
+                    Text(text = EVENTS_INTRO, lineHeight = 26.sp)
+                    Text(
+                        text = EVENTS_CREDITS,
+                        lineHeight = 26.sp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.welcome_screen_intro_primary, BuildKeys.LAUNCHER_NAME),
+                        lineHeight = 26.sp
+                    )
+                    Text(
+                        text = stringResource(R.string.welcome_screen_intro_core),
+                        lineHeight = 26.sp
+                    )
+                }
+            }
+
+            if (EventsConfig.EVENTS_MODE && EVENTS_RULES.isNotEmpty()) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = EVENTS_RULES_TITLE,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    EVENTS_RULES.forEach { rule ->
+                        Text(text = "• $rule", lineHeight = 22.sp)
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = agreementChecked,
+                            onCheckedChange = onAgreementCheckedChange
+                        )
+                        Text(
+                            text = EVENTS_RULES_CONFIRM,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
             }
 
             if (documents.isNotEmpty()) {
@@ -621,6 +683,6 @@ private fun StartButton(
         enabled = canStart && !started,
         onClick = onStart
     ) {
-        Text(text = stringResource(R.string.welcome_screen_start))
+        Text(text = if (EventsConfig.EVENTS_MODE) EVENTS_START else stringResource(R.string.welcome_screen_start))
     }
 }
