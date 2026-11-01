@@ -74,6 +74,7 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.LaunchGameOperatio
 import com.movtery.zalithlauncher.ui.screens.content.elements.TitleTaskFlowDialog
 import com.movtery.zalithlauncher.ui.screens.content.navigateToLogView
 import com.movtery.zalithlauncher.ui.screens.content.navigateToWeb
+import com.movtery.zalithlauncher.ui.screens.main.EventsConfig
 import com.movtery.zalithlauncher.ui.screens.main.MainScreen
 import com.movtery.zalithlauncher.ui.screens.main.crashlogs.LogShareMenu
 import com.movtery.zalithlauncher.ui.screens.main.crashlogs.LogShareMenuOperation
@@ -110,8 +111,6 @@ import com.movtery.zalithlauncher.viewmodel.ModpackImportOperation
 import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ModpackVersionNameOperation
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
-import com.movtery.zalithlauncher.viewmodel.SponsorsDialog
-import com.movtery.zalithlauncher.viewmodel.SponsorsViewModel
 import com.movtery.zalithlauncher.viewmodel.VulkanCheckerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -178,11 +177,6 @@ class MainActivity : BaseAppCompatActivity() {
     val launcherUpgradeViewModel: LauncherUpgradeViewModel by viewModels()
 
     /**
-     * 当月赞助者 ViewModel
-     */
-    private val sponsorsViewModel: SponsorsViewModel by viewModels()
-
-    /**
      * 游戏日志分享菜单 ViewModel
      */
     private val logShareViewModel: LogShareViewModel by viewModels()
@@ -231,13 +225,6 @@ class MainActivity : BaseAppCompatActivity() {
             }
         }
 
-        //拉取当月赞助者数据
-        lifecycleScope.launch {
-            sponsorsViewModel.loadOnStart(
-                showLastMonth = GuideProgress.isPlayed(GuideKeys.Main) && !isImporting
-            )
-        }
-
         //错误信息展示
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -270,9 +257,6 @@ class MainActivity : BaseAppCompatActivity() {
                     }
                     is EventViewModel.Event.CheckUpdate -> {
                         checkUpdate()
-                    }
-                    is EventViewModel.Event.ShowSponsors -> {
-                        sponsorsViewModel.openDialog()
                     }
                     is EventViewModel.Event.KeepScreen -> {
                         keepScreen(event.on)
@@ -324,12 +308,13 @@ class MainActivity : BaseAppCompatActivity() {
             }
         }
 
-        val finishedGame = AllSettings.finishedGame
-        val showSponsorship = AllSettings.showSponsorship
-
-        val festivals = getTodayFestivals(
-            containsChinese = isChinese(this@MainActivity)
-        )
+        val festivals = if (EventsConfig.EVENTS_MODE) {
+            emptyList() //Gustambo: sin efectos de festivales
+        } else {
+            getTodayFestivals(
+                containsChinese = isChinese(this@MainActivity)
+            )
+        }
 
         setContent {
             ZalithLauncherTheme(
@@ -413,24 +398,6 @@ class MainActivity : BaseAppCompatActivity() {
                     }
                 }
 
-                //显示赞助支持的小弹窗
-                if (!isImporting && finishedGame.state >= 100 && showSponsorship.state) {
-                    SimpleAlertDialog(
-                        title = stringResource(R.string.about_sponsor),
-                        text = stringResource(R.string.game_saponsorship_finished_game, finishedGame.state),
-                        dismissText = stringResource(R.string.generic_close),
-                        onDismiss = {
-                            showSponsorship.save(false)
-                        },
-                        onConfirm = {
-                            showSponsorship.save(false)
-                            eventViewModel.sendEvent(
-                                EventViewModel.Event.OpenLink(URL_SUPPORT)
-                            )
-                        }
-                    )
-                }
-
                 ModpackImportOperation(
                     operation = modpackImportViewModel.importOperation,
                     changeOperation = { modpackImportViewModel.importOperation = it },
@@ -512,14 +479,6 @@ class MainActivity : BaseAppCompatActivity() {
                         AllSettings.lastIgnoredVersion.save(ver)
                     },
                     onLinkClick = { eventViewModel.sendEvent(EventViewModel.Event.OpenLink(it)) }
-                )
-
-                //当月赞助者对话框 / 上月赞助者结算报告
-                SponsorsDialog(
-                    viewModel = sponsorsViewModel,
-                    onSupportClick = {
-                        eventViewModel.sendEvent(EventViewModel.Event.OpenLink(URL_SUPPORT))
-                    }
                 )
 
                 //版本修改操作流程
