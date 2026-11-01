@@ -454,7 +454,7 @@ private fun <E: TitledNavKey> TopBar(
                 if (EventsConfig.showAccounts) {
                     TopBarRailItem(
                         selected = inAccountScreen,
-                        painter = painterResource(R.drawable.ic_group_filled), // TODO: cambiar por un ícono de persona
+                        painter = painterResource(R.drawable.ic_person_outlined),
                         text = "Cuentas",
                         onClick = {
                             if (!inAccountScreen) toAccountScreen()
