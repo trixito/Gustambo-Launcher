@@ -603,30 +603,30 @@ private fun customDark(
 /**
  * Gustambo: tema A, oscuro y limpio. Un solo color de acento (GUSTAMBO_ACCENT).
  */
-private val GUSTAMBO_ACCENT = Color(0xFF7C9CFF)
+private val GUSTAMBO_ACCENT = Color(0xFF38E8A0)
 
 private val gustamboDark = darkColorScheme(
     primary = GUSTAMBO_ACCENT,
-    onPrimary = Color(0xFF0B0E14),
-    primaryContainer = Color(0xFF26324F),
-    onPrimaryContainer = Color(0xFFDCE4FF),
-    secondary = Color(0xFFB4BCD0),
-    onSecondary = Color(0xFF0B0E14),
-    secondaryContainer = Color(0xFF232733),
-    onSecondaryContainer = Color(0xFFE1E4EE),
-    background = Color(0xFF0F1115),
-    onBackground = Color(0xFFE6E8EE),
-    surface = Color(0xFF0F1115),
-    onSurface = Color(0xFFE6E8EE),
-    surfaceVariant = Color(0xFF1F232C),
-    onSurfaceVariant = Color(0xFFA9AFBD),
-    surfaceContainerLowest = Color(0xFF0B0D11),
-    surfaceContainerLow = Color(0xFF13161B),
-    surfaceContainer = Color(0xFF171A21),
-    surfaceContainerHigh = Color(0xFF1D2129),
-    surfaceContainerHighest = Color(0xFF232833),
-    outline = Color(0xFF2B303B),
-    outlineVariant = Color(0xFF222630),
+    onPrimary = Color(0xFF04140D),
+    primaryContainer = Color(0xFF12382B),
+    onPrimaryContainer = Color(0xFFC8FFE6),
+    secondary = Color(0xFFB4CFC3),
+    onSecondary = Color(0xFF04140D),
+    secondaryContainer = Color(0xFF1D2B25),
+    onSecondaryContainer = Color(0xFFD7EBE1),
+    background = Color(0xFF080C0A),
+    onBackground = Color(0xFFE4EEE9),
+    surface = Color(0xFF080C0A),
+    onSurface = Color(0xFFE4EEE9),
+    surfaceVariant = Color(0xFF1A2420),
+    onSurfaceVariant = Color(0xFFA7BDB3),
+    surfaceContainerLowest = Color(0xFF050806),
+    surfaceContainerLow = Color(0xFF0C120F),
+    surfaceContainer = Color(0xFF111915),
+    surfaceContainerHigh = Color(0xFF16201B),
+    surfaceContainerHighest = Color(0xFF1C2822),
+    outline = Color(0xFF27352E),
+    outlineVariant = Color(0xFF1F2B25),
 )
 
 @Composable
