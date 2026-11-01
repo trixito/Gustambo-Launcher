@@ -70,6 +70,7 @@ import com.movtery.zalithlauncher.ui.guide.rememberAppGuides
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.Background
+import com.movtery.zalithlauncher.ui.screens.content.elements.EventsBackground
 import com.movtery.zalithlauncher.ui.screens.content.elements.LaunchGameOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.TitleTaskFlowDialog
 import com.movtery.zalithlauncher.ui.screens.content.navigateToLogView
@@ -328,10 +329,14 @@ class MainActivity : BaseAppCompatActivity() {
                     guides.mainScreen,
                     nextTip = { NextTipLabel(it) }
                 ) {
-                    Background(
-                        modifier = Modifier.fillMaxSize(),
-                        viewModel = backgroundViewModel
-                    )
+                    if (EventsConfig.EVENTS_MODE) {
+                        EventsBackground(modifier = Modifier.fillMaxSize())
+                    } else {
+                        Background(
+                            modifier = Modifier.fillMaxSize(),
+                            viewModel = backgroundViewModel
+                        )
+                    }
 
                     MainScreen(
                         screenBackStackModel = screenBackStackModel,
