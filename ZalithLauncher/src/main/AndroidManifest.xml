@@ -125,6 +125,10 @@
         <activity android:name=".ui.activities.ErrorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".ui.activities.DiscordLoginActivity"
+            android:exported="false"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".ui.activities.FatalErrorActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation"
             android:theme="@style/Theme.Material3.DayNight.Dialog.Alert" />

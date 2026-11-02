@@ -59,3 +59,5 @@
 
 # SoraEditor language-textmate
 -keep class org.jcodings.** { *; }
+
+-keep class com.my.kizzyrpc.** { *; }

@@ -3034,4 +3034,12 @@
     <string name="guide_tip_blank">Tap any blank area to continue to the next step</string>
     <!-- Next-step hint shown near a screen corner during the final guide step; tapping any blank area finishes the whole guide -->
     <string name="guide_tip_finish">Tap any blank area to finish the guide</string>
+
+    <!-- Gustambo: Discord Rich Presence -->
+    <string name="settings_game_discord_rpc_title">Discord Rich Presence</string>
+    <string name="settings_game_discord_rpc_summary">Show on your Discord profile that you are playing Trixsafio. Not officially supported by Discord, so use it at your own risk</string>
+    <string name="settings_game_discord_rpc_login_title">Sign in to Discord</string>
+    <string name="settings_game_discord_rpc_login_summary">Sign in through Discord\'s website. The session is stored encrypted on this device only</string>
+    <string name="settings_game_discord_rpc_logout_title">Sign out of Discord</string>
+    <string name="settings_game_discord_rpc_logout_summary">Remove the saved session from this device</string>
 </resources>

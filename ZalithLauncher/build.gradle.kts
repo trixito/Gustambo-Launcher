@@ -303,6 +303,7 @@ dependencies {
     implementation(libs.maven.artifact)
     implementation(libs.mmkv)
     implementation(libs.fishnet)
+    implementation("com.github.dead8309:KizzyRPC:1.0.71")
     implementation(libs.process.phoenix)
     implementation(libs.lunarcalendar)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))

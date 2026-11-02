@@ -26,6 +26,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.discord.DiscordRpcController
 import com.movtery.zalithlauncher.notification.NOTIFICATION_ID_GAME_SERVICE
 import com.movtery.zalithlauncher.notification.NotificationChannelData
 import com.movtery.zalithlauncher.utils.logging.Logger
@@ -38,6 +39,13 @@ class GameService : Service() {
     override fun onCreate() {
         super.onCreate()
         startForegroundNotification()
+        //Gustambo: Discord Rich Presence (solo si el jugador lo activo)
+        DiscordRpcController.start(applicationContext)
+    }
+
+    override fun onDestroy() {
+        DiscordRpcController.stop()
+        super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

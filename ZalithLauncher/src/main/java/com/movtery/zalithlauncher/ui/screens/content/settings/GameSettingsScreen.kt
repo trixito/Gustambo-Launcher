@@ -18,6 +18,15 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.settings
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.movtery.zalithlauncher.game.discord.DiscordRpcStore
+import com.movtery.zalithlauncher.ui.activities.DiscordLoginActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -277,6 +286,74 @@ fun GameSettingsScreen(
                         valueRange = AllSettings.logBufferFlushInterval.floatRange,
                         suffix = "ms",
                         fineTuningControl = true
+                    )
+                }
+            }
+
+            //Gustambo: Discord Rich Presence
+            AnimatedItem { ctx ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animated(ctx)
+                ) {
+                    val context = LocalContext.current
+                    var enabled by remember { mutableStateOf(DiscordRpcStore.isEnabled(context)) }
+                    var loggedIn by remember { mutableStateOf(DiscordRpcStore.hasToken(context)) }
+
+                    val loginLauncher = rememberLauncherForActivityResult(
+                        ActivityResultContracts.StartActivityForResult()
+                    ) {
+                        loggedIn = DiscordRpcStore.hasToken(context)
+                        if (loggedIn) {
+                            DiscordRpcStore.setEnabled(context, true)
+                            enabled = true
+                        }
+                    }
+
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top,
+                        title = stringResource(R.string.settings_game_discord_rpc_title),
+                        summary = stringResource(R.string.settings_game_discord_rpc_summary),
+                        onClick = {},
+                        trailingIcon = {
+                            Switch(
+                                checked = enabled && loggedIn,
+                                onCheckedChange = { on ->
+                                    if (on && !loggedIn) {
+                                        loginLauncher.launch(Intent(context, DiscordLoginActivity::class.java))
+                                    } else {
+                                        enabled = on
+                                        DiscordRpcStore.setEnabled(context, on)
+                                    }
+                                }
+                            )
+                        }
+                    )
+
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        title = stringResource(
+                            if (loggedIn) R.string.settings_game_discord_rpc_logout_title
+                            else R.string.settings_game_discord_rpc_login_title
+                        ),
+                        summary = stringResource(
+                            if (loggedIn) R.string.settings_game_discord_rpc_logout_summary
+                            else R.string.settings_game_discord_rpc_login_summary
+                        ),
+                        onClick = {
+                            if (loggedIn) {
+                                DiscordRpcStore.clearToken(context)
+                                DiscordRpcStore.setEnabled(context, false)
+                                loggedIn = false
+                                enabled = false
+                            } else {
+                                loginLauncher.launch(Intent(context, DiscordLoginActivity::class.java))
+                            }
+                        },
+                        trailingIcon = {}
                     )
                 }
             }
