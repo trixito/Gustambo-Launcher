@@ -1,6 +1,7 @@
 package com.movtery.zalithlauncher.game.discord
 
 import android.content.Context
+import android.os.Build
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.my.kizzyrpc.KizzyRPC
 import com.my.kizzyrpc.model.Assets
@@ -25,6 +26,8 @@ object DiscordRpcController {
     private var rpc: KizzyRPC? = null
 
     fun start(ctx: Context) {
+        //KizzyRPC necesita Android 8.1 (API 27) o superior
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1) return
         if (rpc != null) return
         if (!DiscordRpcStore.isEnabled(ctx)) return
         val token = DiscordRpcStore.readToken(ctx) ?: return
