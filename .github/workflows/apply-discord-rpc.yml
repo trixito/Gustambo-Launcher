@@ -1,0 +1,30 @@
+name: Aplicar Discord RPC
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Aplicar cambios
+        run: |
+          set -e
+          test -f discord-rpc.zip || { echo "Falta discord-rpc.zip en la raiz del repo"; exit 1; }
+          unzip -o discord-rpc.zip -d /tmp/pkg
+          python3 /tmp/pkg/apply_discord_rpc.py /tmp/pkg
+          git rm -f discord-rpc.zip
+
+      - name: Guardar cambios en el repo
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Agregar Discord Rich Presence"
+          git push
+          
