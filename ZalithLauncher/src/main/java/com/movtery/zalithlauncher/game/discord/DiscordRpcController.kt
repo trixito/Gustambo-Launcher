@@ -47,7 +47,9 @@ object DiscordRpcController {
                         timestamps = Timestamps(start = System.currentTimeMillis()),
                         assets = Assets(
                             largeImage = LARGE_IMAGE,
-                            largeText = "Trixsafio"
+                            largeText = "Trixsafio",
+                            smallImage = LARGE_IMAGE,
+                            smallText = "Trixsafio"
                         )
                     ),
                     status = "online",
